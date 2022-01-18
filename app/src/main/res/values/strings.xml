@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">GroceryApp</string>
+    <string name="api_key">"579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b"</string>
+    <string name="format">"json"</string>
+    <string name="sta">"State :"</string>
+    <string name="dist">"District :"</string>
+    <string name="mkt">"Market :"</string>
+    <string name="comty">"Commodity :"</string>
+    <string name="vrty">"Variety :"</string>
+    <string name="arr_date">"Arrival_Date :"</string>
+    <string name="minpr">"Min_price :"</string>
+    <string name="maxpr">"Max_price :"</string>
+    <string name="mdlprc">"Modal_Price :"</string>
+    <string name="pricelw">"Low to High (Min Price) "</string>
+   <string name="pricehig">"High to Low (Max Price) "</string>
+    <string name="prc">"Price"</string>
+    <string name="plselst">"Please Select State"</string>
+    <string name="plseldis">"Please Select Disctrict"</string>
+</resources>

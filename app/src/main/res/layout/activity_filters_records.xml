@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="15dp"
+    android:layout_marginRight="15dp"
+    tools:context=".FilterActivity">
+
+
+    <RelativeLayout
+        android:id="@+id/spinnerlayouts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp">
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/spinbg" />
+
+        <Spinner
+            android:id="@+id/spinnerdistrict"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_below="@+id/spinner"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/spinbg"
+
+            />
+
+        <TextView
+            android:id="@+id/pricetit"
+            style="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/spinnerdistrict"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/prc"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+
+            />
+
+        <RadioGroup
+            android:id="@+id/radioGroupPrice"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pricetit"
+            android:orientation="vertical">
+
+
+            <RadioButton
+                android:id="@+id/radioButton2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pricelw"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radioButton3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pricehig"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radioButton4"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Date"
+                android:textSize="18sp" />
+        </RadioGroup>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/save"
+        android:layout_width="100dp"
+        android:layout_height="55dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="45dp"
+        android:text="Save"
+        android:textAllCaps="false"
+        android:layout_centerHorizontal="true"
+        />
+
+
+</RelativeLayout>

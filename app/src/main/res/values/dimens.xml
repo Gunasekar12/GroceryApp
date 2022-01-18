@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="rectitle">16sp</dimen>
+    <dimen name="recsubtitle">14sp</dimen>
+    <dimen name="cardev">10dp</dimen>
+    <dimen name="cartop">10dp</dimen>
+    <dimen name="carbtm">10dp</dimen>
+</resources>
