@@ -26,13 +26,14 @@ public class FiltersRecords extends AppCompatActivity implements AdapterView.OnI
 
     private ArrayList<String> stateslist = new ArrayList<>();
     private ArrayList<String> districtslist = new ArrayList<>();
-
+    private String userSelectedState, userSelectedDistrict;
     private Spinner spinner, spinnerdis;
     private Button submit;
     private ArrayList<Record1> listsdatas;
     private static String Sel_state,Sel_dis;
     private ArrayList<ArrayList<Record1>> filtersave= new ArrayList<ArrayList<Record1>>();
     private RadioButton min_max, max_min, dateComparator;
+    private groceryDao groceryDaoObj;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +47,6 @@ public class FiltersRecords extends AppCompatActivity implements AdapterView.OnI
         dateComparator = findViewById(R.id.radioButton4);
 
         listsdatas = (ArrayList<Record1>) getIntent().getSerializableExtra("filterdatas");
-        // //getapidata();
-
-        Log.d("getdatasfilter", "lmfd " + listsdatas.size());
-
 
         if (listsdatas != null) {
             setstatedata();
@@ -59,6 +56,9 @@ public class FiltersRecords extends AppCompatActivity implements AdapterView.OnI
         spinner.setOnItemSelectedListener(this);
 
         spinnerdis.setOnItemSelectedListener(this);
+
+        groceryDaoObj = groceryDb.getGroceryDatabase(this).groceryDao();
+
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,26 +80,24 @@ public class FiltersRecords extends AppCompatActivity implements AdapterView.OnI
 
                 if(!TextUtils.isEmpty(Sel_state))
                 {
-                    stateslist.clear();
-                    filterstates(Sel_state);
+                    listsdatas = (ArrayList<Record1>) groceryDaoObj.getParticularState(Sel_state);
                 }
                 if(!TextUtils.isEmpty(Sel_dis))
                 {
-                    districtslist.clear();
-                    filterdistrict(Sel_dis);
+                    listsdatas = (ArrayList<Record1>) groceryDaoObj.getParticularDistrict(Sel_dis);
+                    Log.i("District", "lists_District :" + Sel_dis);
                 }
 
+                for(int i = 0; i < listsdatas.size(); i++)
+                {
+                    Log.i("District", "lists_District :" + listsdatas.get(i).getDistrict());
 
+                }
 
                 Intent intent = new Intent(FiltersRecords.this, MainActivity.class);
-                intent.putStringArrayListExtra("stateRecords",  stateslist);
-                intent.putStringArrayListExtra("districtRecords",  districtslist);
-                intent.putExtra("filteredRecords",listsdatas);
+                intent.putExtra("filteredRecords",new ArrayList<Record1>(listsdatas));
 
                 startActivity(intent);
-
-
-
             }
         });
     }
@@ -149,47 +147,20 @@ public class FiltersRecords extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
-        Toast.makeText(getApplicationContext(),"being called",Toast.LENGTH_SHORT).show();
+
         if(adapterView.getId()==R.id.spinner)
         {
             Sel_state = listsdatas.get(pos).getState();
-          //  filterstates(Sel_state);
-
-        }
+         }
         else if(adapterView.getId()==R.id.spinnerdistrict)
         {
-          //  if(filtersave.size()>0)
-                //filtersave.clear();
-
             Sel_dis=listsdatas.get(pos).getDistrict();
-         //   filterdistrict(Sel_dis);
-
         }
     }
 
-    private void filterdistrict(String sel_dis) {
-
-        for(int i = 0; i < listsdatas.size(); i++)
-        {
-            if(listsdatas.get(i).getDistrict().equals(sel_dis))
-               // districtRecords.add(listsdatas.get(i));
-                districtslist.add(String.valueOf(i));
-        }
-
-    }
-
-    private void filterstates(String sel_state) {
-
-        for(int i = 0; i < listsdatas.size(); i++)
-        {
-            if(listsdatas.get(i).getState().equals(sel_state))
-                //stateRecords.add(listsdatas.get(i));
-                stateslist.add(String.valueOf(i));
-        }
-    }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-
+        Toast.makeText(this, "Please Select any one option!", Toast.LENGTH_SHORT).show();
     }
 }

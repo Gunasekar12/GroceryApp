@@ -3,39 +3,45 @@ package com.example.groceryapp
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.AsyncTask
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ListView
+import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.groceryapp.Adapters.FieldlistAdapter
+import com.example.groceryapp.Room.GroceryDao1
+import com.example.groceryapp.Room.Grocerydao
 import com.example.groceryapp.model.Record1
 import com.example.groceryapp.model.Root
+import com.example.groceryapp.model.getgroceryresponse
 
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
 
     var fieldadapter:FieldlistAdapter?=null
-    var fieldrec:ListView?=null
+    var fieldrec:RecyclerView?=null
     var groceryList: List<Record1> ?= null
-
-    var stateRecords : ArrayList<String> ?= null
-    var districtRecords : ArrayList<String> ?= null
     var filteredRecords : ArrayList<Record1> ?= null
-    val tempStateList : ArrayList<Record1>?=null
     var grocerydao: groceryDao ?= null
+    val grocerygetlist: ArrayList<Record1> =ArrayList()
 
 
-    val grocerygetlist:ArrayList<Record1>?=ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -46,67 +52,34 @@ class MainActivity : AppCompatActivity() {
             fetchdatafromserver()
 
         } else {
+            fetchdatafromRoom()
 
-            grocerydao = groceryDb.getGroceryDatabase(applicationContext).groceryDao()
-            groceryList = grocerydao!!.getAllRecords()
-               if(groceryList != null && groceryList!!.size > 0) {
-                   setadapter(grocerygetlist!! as ArrayList<Record1>)
-               }
-               else
+            if(groceryList!!.isNotEmpty())
+            {
+                setadapter(groceryList!! as ArrayList<Record1>)
+                fieldadapter!!.notifyDataSetChanged()
+            }
+            else{
                 Toast.makeText(this, "Check the NetworkConnection. No data Found" , Toast.LENGTH_SHORT).show()
+            }
         }
 
-        val // = intent
-        stateRecords = intent.getStringArrayListExtra("stateRecords")
-        districtRecords = intent.getStringArrayListExtra("districtRecords")
-
+        val intent = intent // = intent
         filteredRecords = intent.getSerializableExtra("filteredRecords") as ArrayList<Record1>?
 
+        if(filteredRecords != null) {
 
-        if(filteredRecords != null && filteredRecords!!.size > 0)
-        {
-//            for (i in filteredRecords!!.iterator()) {
-//                System.out.println("filtered_Record :" + i.min_price)
-//            }
-
-            if(groceryList!!.size > 0)
-                grocerygetlist!!.clear()
-            else{
-                setadapter(filteredRecords!!)
-            }
-            //Toast.makeText(this, "Date_Size " + filteredRecords!!.size, Toast.LENGTH_SHORT).show()
+            // filtering the data
+            setadapter(filteredRecords!!)
+            fieldadapter!!.notifyDataSetChanged()
         }
 
-      /*  if(stateRecords != null)
-        {
+    }
 
-            Toast.makeText(this, "Date_Size " + grocerygetlist!!.size, Toast.LENGTH_SHORT).show()
-
-            for(i in stateRecords!!.iterator())
-            {
-                //filteredRecords!!.add(grocerygetlist!!.get(index))
-                    tempStateList!!.add(grocerygetlist!!.get(0))
-            }
-
-            Toast.makeText(this, "temp_list_size" + tempStateList!!.size, Toast.LENGTH_SHORT).show()
-
-         //   fieldrec!!.adapter = FieldlistAdapter(this, filteredRecords)
-        }
-
-        if(districtRecords != null)
-        {
-            //  Toast.makeText(this, stateRecords!!.size, Toast.LENGTH_SHORT).show()
-            for(i in districtRecords!!.iterator())
-            {
-                //filteredRecords!!.add(grocerygetlist!!.get(index))
-                Toast.makeText(this, i, Toast.LENGTH_SHORT).show()
-
-            }
-
-
-            //   fieldrec!!.adapter = FieldlistAdapter(this, filteredRecords)
-        }*/
-
+    private fun fetchdatafromRoom(){
+        // Retrieving values from ROOM DB
+        grocerydao = groceryDb.getGroceryDatabase(applicationContext).groceryDao()
+        groceryList = grocerydao!!.allRecords
     }
 
     private fun fetchdatafromserver() {
@@ -124,43 +97,42 @@ class MainActivity : AppCompatActivity() {
 
                 val getgroceryresponse: Root?  = response.body()!!
 
-                setadapter(getgroceryresponse!!.getRecords())
+                if (getgroceryresponse != null)
+                {
+                    if(filteredRecords != null)
+                    {
+                        setadapter(filteredRecords!!)
+                        fieldadapter!!.notifyDataSetChanged()
+                    }
+                    else
+                    setadapter(getgroceryresponse.getRecords())
+                }
 
-                grocerygetlist!!.addAll(getgroceryresponse.getRecords())
+                if (getgroceryresponse != null) {
+                    grocerygetlist!!.addAll(getgroceryresponse.getRecords())
+                }
 
                 // inserting value into Room DB
                 grocerydao = groceryDb.getGroceryDatabase(applicationContext).groceryDao()
-
                 grocerydao!!.deleteRecord()
 
-                for(i in grocerygetlist.iterator())
+                for(i in grocerygetlist!!.iterator())
                 {
                     grocerydao!!.insertRecord(i)
                 }
-
-                // Retrieving values from ROOM DB
-                 groceryList = grocerydao!!.getAllRecords()
-
-                Log.i("room_Db", "data: " + grocerygetlist!!.size)
-
             }
 
             override fun onFailure(call: Call<Root>, t: Throwable) {
-                Log.d("retrofit100failuer ", "datas " + t.message)
+                Log.d("retrofit100failure ", "datas " + t.message)
             }
-
         })
-
     }
 
     private fun setadapter(getgroceryresponse: ArrayList<Record1>) {
+        fieldadapter=FieldlistAdapter(getgroceryresponse)
+        fieldrec!!.layoutManager=LinearLayoutManager(this)
+        fieldrec!!.adapter=fieldadapter
 
-   //     fieldadapter=FieldlistAdapter(getgroceryresponse.getRecords())
-   //     fieldrec!!.layoutManager=LinearLayoutManager(this)
-   //      fieldrec!!.adapter
-
-        val adapter = FieldlistAdapter(this,getgroceryresponse)
-        fieldrec!!.adapter = adapter
     }
 
     @SuppressLint("MissingPermission")
@@ -204,6 +176,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // creating menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return super.onCreateOptionsMenu(menu)
@@ -215,10 +188,17 @@ class MainActivity : AppCompatActivity() {
         if(item.itemId == R.id.filter)
         {
             val intent = Intent(applicationContext,FiltersRecords::class.java)
-            intent.putExtra("filterdatas", grocerygetlist)
+            if (checkForInternet(this)){
+                intent.putExtra("filterdatas", grocerygetlist)
+            }
+            else
+            {
+                fetchdatafromRoom()
+                intent.putExtra("filterdatas", groceryList as ArrayList<Record1>)
+            }
+
             startActivity(intent)
         }
-
 
         return super.onOptionsItemSelected(item)
     }

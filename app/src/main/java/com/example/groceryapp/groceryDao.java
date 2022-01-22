@@ -16,6 +16,12 @@ public interface groceryDao {
     @Query("Select * from groceryRecords")
     List<Record1> getAllRecords();
 
+    @Query("Select * from groceryRecords where state = :stateToMatch")
+    List<Record1> getParticularState(String stateToMatch);
+
+    @Query("Select * from groceryRecords where district = :districtToMatch")
+    List<Record1> getParticularDistrict(String districtToMatch);
+
     @Insert
     void insertRecord(Record1 record1);
 

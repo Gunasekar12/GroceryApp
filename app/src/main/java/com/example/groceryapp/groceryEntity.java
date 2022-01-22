@@ -9,7 +9,6 @@ import java.io.Serializable;
 @Entity(tableName = "groceryRecords")
 public class groceryEntity implements Serializable{
 
-
     @ColumnInfo(name = "state")
     String state;
 

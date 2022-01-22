@@ -10,15 +10,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:layout_height="wrap_content">
 
-
-        <ListView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fieldrecy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:listitem="@layout/card_view_desing" />
+            android:background="@color/white"
+            tools:ignore="MissingConstraints" />
     </RelativeLayout>
+
 
 </RelativeLayout>
